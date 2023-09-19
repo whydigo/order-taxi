@@ -1,35 +1,84 @@
-import React from "react";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { useMemo } from "react";
 
-export default function Closer() {
+interface CrewInfo {
+  crew_id: number;
+  car_mark: string;
+  car_model: string;
+  car_color: string;
+  car_number: string;
+  driver_name: string;
+  driver_phone: string;
+  lat: number;
+  lon: number;
+  distance: number;
+}
+
+interface CrewsResponse {
+  code: number;
+  descr: string;
+  data: {
+    crews_info: CrewInfo[];
+  };
+}
+
+interface CloserProps {
+  error: boolean;
+  inputValue: string;
+  searchCrews: () => CrewsResponse;
+}
+
+export default function Closer({
+  error,
+  inputValue,
+  searchCrews,
+}: CloserProps) {
+  const closestCrew = useMemo(() => {
+    const crewsResponse = searchCrews();
+    const crews = crewsResponse?.data.crews_info || [];
+    return (
+      crews.reduce((closest: CrewInfo | null, current: CrewInfo) => {
+        if (!closest || current.distance < closest.distance) {
+          return current;
+        } else {
+          return closest;
+        }
+      }, null) || null
+    );
+  }, [searchCrews]);
+
   return (
     <Box
       sx={{
         maxWidth: "36%",
         display: "flex",
         alignItems: "center",
-        backgroundColor: "#e7e7e7",
         padding: 2,
         borderRadius: 4,
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         marginTop: 2,
         marginLeft: 4,
       }}
     >
-      <Typography variant="h6" sx={{ marginRight: 2 }}>
-        Подходящий экипаж:
-      </Typography>
-      <Paper
+      <Typography
+        variant="h6"
         sx={{
-          padding: 2,
-          backgroundColor: " #fdfdfd",
-          color: 'black',
-          borderRadius: 4,
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+          marginRight: 2,
+          height: "80px",
+          display: "flex",
+          alignItems: "center",
         }}
       >
-        Какое-то такси
-      </Paper>
+        Подходящий экипаж:
+      </Typography>
+      {!error && inputValue !== "" && closestCrew ? (
+        <div>
+          <p>{`${closestCrew.car_mark} ${closestCrew.car_model}`}</p>
+          <p>{closestCrew.car_color}</p>
+          <p>{closestCrew.car_number}</p>
+        </div>
+      ) : (
+        <div>Не найдено</div>
+      )}
     </Box>
   );
 }

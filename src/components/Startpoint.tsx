@@ -1,41 +1,64 @@
-import React from "react";
 import { Box, TextField, Typography } from "@mui/material";
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 
-export default function Startpoint() {
-  const [inputValue, setInputValue] = useState("");
+interface StartpointProps {
+  handleSearch: () => void;
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  setError: (error: boolean) => void;
+  error: boolean;
+}
 
+export default function Startpoint({
+  handleSearch,
+  inputValue,
+  setInputValue,
+  setError,
+  error,
+}: StartpointProps) {
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
+    handleSearch();
+    setError(false);
   };
 
   return (
-    <Box
-      sx={{
-        width: "70%",
-        display: "flex",
-        gap: "20px",
-        alignItems: "center",
-        padding: 2,
-        marginLeft: 4,
-        backgroundColor: "#e7e7e7 ",
-        borderRadius: 4,
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <Typography variant="h6">Откуда:</Typography>
-      <TextField
-        fullWidth
+    <>
+      <Box
         sx={{
-          bgcolor: " #fdfdfd",
-          borderRadius: "4px",
+          width: "70%",
+          display: "flex",
+          gap: "20px",
+          alignItems: "center",
+          padding: 2,
+          marginLeft: 4,
+          borderRadius: 4,
+          position: "relative",
         }}
-        size="small"
-        id="outlined-basic"
-        variant="outlined"
-        value={inputValue}
-        onChange={handleInputChange}
-      />
-    </Box>
+      >
+        <Typography variant="h6">Откуда:</Typography>
+        <TextField
+          fullWidth
+          size="small"
+          id="outlined-basic"
+          variant="outlined"
+          value={inputValue}
+          onChange={handleInputChange}
+        />
+        {error && (
+          <Typography
+            variant="body2"
+            sx={{
+              color: "red",
+              position: "absolute",
+              top: "66px",
+              left: "110px",
+            }}
+          >
+            Адрес не найден
+          </Typography>
+        )}
+      </Box>
+    </>
   );
 }

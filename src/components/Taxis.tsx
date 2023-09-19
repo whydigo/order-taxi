@@ -2,32 +2,35 @@ import React from "react";
 import { Box, List, ListItem, ListItemText } from "@mui/material";
 
 interface Taxi {
-  name: string;
-  fare: string;
+  car_mark: string;
+  car_model: string;
+  car_color: string;
+  distance: number;
 }
 
-const taxiData: Taxi[] = [
-  { name: "Taxi A", fare: "$20" },
-  { name: "Taxi B", fare: "$25" },
-  { name: "Taxi C", fare: "$30" },
-  { name: "Taxi D", fare: "$35" },
-];
+interface TaxisProps {
+  searchCrews: () => {
+    data: {
+      crews_info: Taxi[];
+    };
+  };
+}
 
-export default function Taxis() {
+export default function Taxis({ searchCrews }: TaxisProps) {
+  const crews = searchCrews();
+
   return (
     <Box
       sx={{
         width: "28%",
         textAlign: "center",
         padding: 2,
-        backgroundColor: "#fdfdfd",
         borderRadius: 4,
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
       }}
     >
-
       <List sx={{ padding: 0 }}>
-        {taxiData.map((taxi, index) => (
+        {crews.data.crews_info.map((taxi: Taxi, index: number) => (
           <ListItem
             key={index}
             sx={{
@@ -36,8 +39,12 @@ export default function Taxis() {
             }}
           >
             <ListItemText
-              primary={taxi.name}
-              secondary={`Стоимость поездки: ${taxi.fare}`}
+              primary={`${taxi.car_mark} ${taxi.car_model}`}
+              secondary={`${taxi.car_color}`}
+              sx={{ textAlign: "left" }}
+            />
+            <ListItemText
+              secondary={`${taxi.distance}м`}
               sx={{ textAlign: "left" }}
             />
           </ListItem>
